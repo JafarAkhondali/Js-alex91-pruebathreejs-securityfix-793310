@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="sp">
+	<head>
+		<title>Semana17</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+			}
+			#info a {
+				color: #046;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="llamaLib">	
+	<script src="Lib/jquery-3.3.1.min.js"></script>
+	<script src="Lib/3js/build/three.js"></script>
+
+		<script src="Lib/3js/examples/js/libs/inflate.min.js"></script>
+		<script src="Lib/3js/examples/js/loaders/FBXLoader.js"></script>
+
+		<script src="Lib/3js/examples/js/controls/OrbitControls.js"></script>
+
+		<script src="Lib/3js/examples/js/WebGL.js"></script>
+		<script src="Lib/3js/examples/js/libs/stats.min.js"></script>
+		<script src="Lib/3js/examples/js/utils/SceneUtils.js"></script>
+		<script src="Lib/Fisicas/ammo.js"></script>
+		</div>
+		<div id="llamaJs">
+			<script src="Js/Controles.js"></script>
+			<script src="Js/CondicionesIniciales.js"></script>
+			<script src="Js/Funciones.js"></script>
+			
+		</div>
+
+		<script>
+				
+			if ( WEBGL.isWebGLAvailable() === false ) {
+
+
+				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+
+			}
+			
+			init();
+			animate();
+			//INICIO
+			function init() {
+				
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.set( 0, 200, -300 );
+
+				controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 100, 0 );
+				controls.update();
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xa0a0a0 );
+				scene.fog = new THREE.Fog( 0xa0a0a0, 100, 2000 );
+
+				// SUELO
+				creaSuelo();
+
+				// MIXAMO y los arboles
+				cargaMixamo();
+				ponEsferas();
+				ponCubos();
+				ponCilindros();
+				//LUZ
+				ponLuz();
+				//RENDER
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResize, false );
+				
+				// stats
+				stats = new Stats();
+				container.appendChild( stats.dom );
+				
+				
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			
+			
+			//BUCLE
+			function animate() {
+				angulo += girando/10;
+				posz += Math.cos(angulo)*avance*3
+				posx += Math.sin(angulo)*avance*3
+				
+				
+				camera.position.x = posx
+				camera.position.z = posz - 400
+				
+				personaje.position.z = posz
+				personaje.position.x = posx
+				personaje.rotation.y = angulo;
+
+				colisionBloques();
+				colisionEsferas();
+				colisionCilindros();
+
+				requestAnimationFrame( animate );
+				gestionTeclas();
+				
+				//updatePhysics( deltaTime );
+				renderer.render( scene, camera );
+				
+				stats.update();
+
+			}
+
+		</script>
+
+	</body>
+</html>
